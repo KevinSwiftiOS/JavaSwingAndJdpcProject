@@ -1,0 +1,2 @@
+# JavaSwingAndJdpcProject
+大三上学Java大作业 用的是java swing做前端界面 用jdbc链接mysql数据库 班级学生信息的管理

@@ -2,15 +2,13 @@ package  com.kevin.Login;
 import com.kevin.Login.FirstPanel;
 import com.kevin.Login.SecondPanel;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
+import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -37,11 +35,15 @@ public class Main extends JFrame {
     private JMenu preMenu;
     //文件菜单的三个item  分别为从文件导入 导出到文件 退出系统
     private JMenuItem fromFileItem,toFileItem,exitItem;
+    private JPanel processPanel;
+    private  JProgressBar progressBar;
     //统计菜单的按钮 学生人数 平均分item 最高分item  最低分item
    private  JMenuItem stuNum,avgItem,highItem,lowItem;
     //外观菜单的item  3个风格的item
   private  JRadioButtonMenuItem  metalItem,metifItem,windowItem;
-
+//导入导出时候的文件的
+    private File selectedFile;
+    private  String fileName;
     public Main(){
         //设置一些默认值
         // set title
@@ -73,6 +75,17 @@ public class Main extends JFrame {
         this.add(firstPanel, BorderLayout.CENTER);
         this.add(thirdPanel,BorderLayout.CENTER);
         // show the window
+        //progressBar的使用
+        processPanel = new JPanel();
+        progressBar = new JProgressBar(JProgressBar.HORIZONTAL,0,100);
+        progressBar.setPreferredSize(new Dimension(400,30));
+        progressBar.setStringPainted(true);
+        progressBar.setBorder(BorderFactory.createLineBorder(Color.black));
+       processPanel.add(progressBar);
+       processPanel.setVisible(false);
+        this.add(processPanel);
+
+
         this.setVisible(true);
 
     }
@@ -139,10 +152,10 @@ public class Main extends JFrame {
         menuBar.add(preMenu);
         setJMenuBar(menuBar);
         //各个item点击的事件
-        MenuItemListener itemListener = new MenuItemListener();
+        FileMenuItemListener itemListener = new FileMenuItemListener();
         fromFileItem.addActionListener(itemListener);
         toFileItem.addActionListener(itemListener);
-
+         exitItem.addActionListener(itemListener);
     }
     //文件菜单创建
 public  void  buildFileMenu() {
@@ -173,6 +186,8 @@ public  void buildCntMenu() {
     cntMenu.add(scoreMenu);
     cntMenu.addSeparator();
     cntMenu.add(stuNum);
+    CntMenuItemListener itemListener = new CntMenuItemListener();
+    stuNum.addActionListener(itemListener);
 }
 //统计菜单子菜单下的score菜单的创建
 public  void  buildScoreMenu() {
@@ -187,7 +202,10 @@ public  void  buildScoreMenu() {
     scoreMenu.add(avgItem);
     scoreMenu.add(highItem);
     scoreMenu.add(lowItem);
-
+    CntMenuItemListener itemListener = new CntMenuItemListener();
+    avgItem.addActionListener(itemListener);
+   highItem.addActionListener(itemListener);
+    lowItem.addActionListener(itemListener);
 }
 //创建系统外观菜单
 public void buildPreMenu() {
@@ -195,10 +213,18 @@ public void buildPreMenu() {
     metalItem = new JRadioButtonMenuItem("Metal风格");
     metifItem = new JRadioButtonMenuItem("Metif风格");
     windowItem = new JRadioButtonMenuItem("Windows风格");
+    ButtonGroup group = new ButtonGroup();
+    group.add(metalItem);
+    group.add(metifItem);
+    group.add(windowItem);
     metalItem.setSelected(true);
     preMenu.add(metalItem);
     preMenu.add(metifItem);
     preMenu.add(windowItem);
+    PreMenuItemListener itemListener = new PreMenuItemListener();
+    metifItem.addActionListener(itemListener);
+    metalItem.addActionListener(itemListener);
+    windowItem.addActionListener(itemListener);
 
 }
 //三个label的点击事件 切换不同的panel
@@ -246,13 +272,176 @@ public void buildPreMenu() {
             }
         }
     }
-    private class MenuItemListener implements ActionListener{
+    //文件菜单栏下的item的点击事件
+    private  class FileMenuItemListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent ex) {
-           System.out.println("click");
-        }
+            if(ex.getSource() == fromFileItem){
+            //打开文件选择器
+                JFileChooser fileChooser = new JFileChooser();
+                //显示打开文件对话框
+                int status = fileChooser.showOpenDialog(null);
+                if(status == JFileChooser.APPROVE_OPTION){
+                    //获取用户所选择的文件对象
+                     selectedFile = fileChooser.getSelectedFile();
+                    //获取用户所选择的文件的路径
+                     fileName = selectedFile.getPath();
+                    //显示该路径
+                 //创建线程 开始启动
+                    Thread fromFileThread = new Thread(new FileOperate());
+                    fromFileThread.start();
 
+                }
+            }
+            if(ex.getSource() == toFileItem){
+                //打开保存到文件的对话框
+             JFileChooser fileChooser = new JFileChooser();
+                int status = fileChooser.showSaveDialog(null);
+                if(status == JFileChooser.APPROVE_OPTION){
+                    //获取用户所选择的文件对象
+                    File selectedFile = fileChooser.getSelectedFile();
+                    //获取用户所选择的文件的路径
+                    String filename = selectedFile.getPath();
+                    //显示该路径
+                    JOptionPane.showMessageDialog(null,"you select " + filename);
+                }
+                if(status == JFileChooser.CANCEL_OPTION){
+                    System.out.println("cancel");
+                }
+            }
+            if(ex.getSource() == exitItem){
+                System.exit(0);
+            }
+
+            System.out.println("click");
+        }
     }
+  //统计菜单栏下的item的点击事件
+    private  class CntMenuItemListener  implements  ActionListener{
+      @Override
+      public void actionPerformed(ActionEvent ex) {
+          if(ex.getSource() == stuNum){
+
+          }
+          if(ex.getSource() == avgItem){
+
+          }
+          if(ex.getSource() == highItem){
+
+          }
+          if(ex.getSource() == lowItem){
+
+          }
+          System.out.println("click");
+      }
+  }
+    //外观菜单栏下的item的点击事件
+    private  class PreMenuItemListener  implements  ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent ex) {
+            if(ex.getSource() == metalItem){
+                //设置窗体的风格
+                try {
+                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(navigatorPanel);
+                    SwingUtilities.updateComponentTreeUI(menuBar);
+                    SwingUtilities.updateComponentTreeUI(firstPanel);
+                    SwingUtilities.updateComponentTreeUI(secondPanel);
+                    SwingUtilities.updateComponentTreeUI(thirdPanel);
+
+                } catch(Exception e){
+                    JOptionPane.showMessageDialog(null,
+                            "Error setting the look and feel.");
+                    System.exit(0);
+
+                }
+            }
+            if(ex.getSource() == metifItem) {
+                try {
+         UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(navigatorPanel);
+                    SwingUtilities.updateComponentTreeUI(menuBar);
+                    SwingUtilities.updateComponentTreeUI(firstPanel);
+                    SwingUtilities.updateComponentTreeUI(secondPanel);
+                    SwingUtilities.updateComponentTreeUI(thirdPanel);
+
+                } catch(Exception e){
+                    JOptionPane.showMessageDialog(null,
+                            "Error setting the look and feel.");
+                    System.exit(0);
+
+                }
+            }
+            if(ex.getSource() == windowItem){
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                    SwingUtilities.updateComponentTreeUI(navigatorPanel);
+                    SwingUtilities.updateComponentTreeUI(menuBar);
+                    SwingUtilities.updateComponentTreeUI(firstPanel);
+                    SwingUtilities.updateComponentTreeUI(secondPanel);
+                    SwingUtilities.updateComponentTreeUI(thirdPanel);
+
+                } catch(Exception e){
+                    JOptionPane.showMessageDialog(null,
+                            "Error setting the look and feel.");
+                    System.exit(0);
+
+                }
+            }
+
+            System.out.println("clickPre");
+        }
+    }
+    //创建线程来读入文件
+    private  class FileOperate implements Runnable{
+        @Override
+        public void run() {
+     if(fileName.length() == 0){
+         JOptionPane.showMessageDialog(null,"没有选择文件夹","警告",JOptionPane.WARNING_MESSAGE);
+
+     }else{
+         //看文件是否选择
+         if(selectedFile.length() == 0){
+             progressBar.setMaximum(100);
+             progressBar.setValue(100);
+         }else{
+             progressBar.setMaximum((int)selectedFile.length());
+         }
+         try {
+             processPanel.setVisible(true);
+             boolean isFinished = false;
+             FileInputStream fin = new FileInputStream(selectedFile);
+             System.out.print(selectedFile.length());
+             InputStreamReader reader = new InputStreamReader(fin,"utf-8"); //最后的"GBK"根据文件属性而定，如果不行，改成"UTF-8"试试
+             BufferedReader br = new BufferedReader(reader);
+             int count = 0, ans;
+             byte[] buff = new byte[1024];
+             while ((ans = fin.read(buff)) > 0) {
+                 count += ans;
+                 progressBar.setValue(count);
+                 String str = new String(buff,0,ans,"UTF-8");
+                  System.out.print(str);
+
+                 try {
+                     Thread.sleep(1);
+                 } catch (InterruptedException e) {
+                     e.printStackTrace();
+                 }
+             }
+
+             isFinished = true;
+             if(isFinished){
+               //  processPanel.setVisible(false);
+                 JOptionPane.showMessageDialog(null,"导入成功","成功",JOptionPane.INFORMATION_MESSAGE);
+             }
+         }catch (IOException e){
+             e.printStackTrace();
+         }
+     }
+        }
+    }
+
+
 
     public static void main(String[] args) {
       new Main();

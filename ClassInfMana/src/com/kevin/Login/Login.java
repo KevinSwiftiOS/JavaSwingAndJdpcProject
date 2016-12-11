@@ -35,7 +35,7 @@ public class Login extends JFrame{
         passwordLayout.setAlignment(FlowLayout.CENTER);
 
         btnPanel.setLayout(new FlowLayout());
-        FlowLayout btnPanelLayout = (FlowLayout)usernamePanel.getLayout();
+        FlowLayout btnPanelLayout = (FlowLayout)btnPanel.getLayout();
         btnPanelLayout.setAlignment(FlowLayout.CENTER);
         //加元素
         usernamePanel.add(usernameLabel);

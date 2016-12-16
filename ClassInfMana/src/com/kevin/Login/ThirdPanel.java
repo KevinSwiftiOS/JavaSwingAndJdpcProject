@@ -6,6 +6,8 @@ package com.kevin.Login;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -90,7 +92,40 @@ public class ThirdPanel extends JPanel{
         configBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.print("222");
+                JDBCMySQL jdbcMySQL = new JDBCMySQL();
+                jdbcMySQL.getConnection();
+                //从数据库中读取密码
+                String oldPasswordIndb = "";
+                String oldSql = "select password from security where userName = 'admin'";
+                ResultSet res = jdbcMySQL.query(oldSql);
+               try {
+                   if (res.next()) {
+                       oldPasswordIndb = res.getString("password");
+                   }
+                   if(!oldTextField.getText().toString().equals(oldPasswordIndb)) {
+                       JOptionPane.showMessageDialog(null, "旧密码填写错误", "警告", JOptionPane.ERROR_MESSAGE);
+                   }else if(!newTextField.getText().toString().equals(configTextField.getText().toString())){
+                       JOptionPane.showMessageDialog(null, "新密码两次填写不相同", "警告", JOptionPane.ERROR_MESSAGE);
+                   }else{
+                       //进行跟新操作
+                       String updatePasswordSql = "UPDATE security SET password = \'" + newTextField.getText().toString() + "\' WHERE userName = 'admin'";
+                       if(jdbcMySQL.update(updatePasswordSql) == 1){
+                           JOptionPane.showMessageDialog(null, "跟新密码成功", "恭喜您", JOptionPane.INFORMATION_MESSAGE);
+                       }else{
+                           JOptionPane.showMessageDialog(null, "跟新密码失败", "警告", JOptionPane.ERROR_MESSAGE);
+                       }
+                   }
+               }catch(SQLException e1){
+                   e1.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.ERROR_MESSAGE);
+                }
+
+
+
+
+
+
+
             }
         });
 

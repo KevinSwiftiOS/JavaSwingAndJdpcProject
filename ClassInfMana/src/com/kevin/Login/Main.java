@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -320,19 +322,106 @@ public void buildPreMenu() {
     private  class CntMenuItemListener  implements  ActionListener{
       @Override
       public void actionPerformed(ActionEvent ex) {
+          JDBCMySQL jdbcMySQL = new JDBCMySQL();
+          jdbcMySQL.getConnection();
           if(ex.getSource() == stuNum){
-
+            //获取学生总人数
+           String sql = "select * from studentInfo";
+         ResultSet res =  jdbcMySQL.query(sql);
+              //人数
+              try {
+                  res.last();
+                  String stuNumStr = "学生人数:" + res.getRow();
+                  JOptionPane.showMessageDialog(null, stuNumStr, "学生人数", JOptionPane.WARNING_MESSAGE);
+              }catch (SQLException e){
+                  e.printStackTrace();
+                  JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
+              }
           }
           if(ex.getSource() == avgItem){
-
+               //查询成绩
+              String chineseAvgSql = "select avg(chinese) as avg from studentInfo";
+              String mathAvgSql = "select avg(math) as avg from studentInfo";
+              String englishAvgSql = "select avg(english) as avg from studentInfo";
+              ResultSet chineseRes   =   jdbcMySQL.query(chineseAvgSql);
+              ResultSet mathRes   =   jdbcMySQL.query(mathAvgSql);
+              ResultSet englishRes   =   jdbcMySQL.query(englishAvgSql);
+              String chinese = "语文:",math = "数学:",english = "英语:";
+             try {
+                 java.text.DecimalFormat   df = new   java.text.DecimalFormat("#.##");
+                 //保留两位小数
+                 if (chineseRes.next()) {
+                  chinese +=  df.format(chineseRes.getFloat("avg"));
+                 }
+                 if (mathRes.next()) {
+                     math +=  df.format(mathRes.getFloat("avg"));
+                 }
+                 if (englishRes.next()) {
+                     english +=  df.format(englishRes.getFloat("avg"));
+                 }
+                 JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科平均分", JOptionPane.WARNING_MESSAGE);
+             }catch (SQLException e){
+                 JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
+                 e.printStackTrace();
+             }
           }
           if(ex.getSource() == highItem){
-
+                //查询最高分
+              //查询成绩
+              String chineseHighSql = "select max(chinese) as max from studentInfo";
+              String mathHighSql = "select max(math) as max from studentInfo";
+              String englishHighSql = "select max(english) as max from studentInfo";
+              ResultSet chineseRes   =   jdbcMySQL.query(chineseHighSql);
+              ResultSet mathRes   =   jdbcMySQL.query(mathHighSql);
+              ResultSet englishRes   =   jdbcMySQL.query(englishHighSql);
+              String chinese = "语文:",math = "数学:",english = "英语:";
+              try {
+                  java.text.DecimalFormat   df = new   java.text.DecimalFormat("#.##");
+                  //保留两位小数
+                  if (chineseRes.next()) {
+                      chinese +=  df.format(chineseRes.getFloat("max"));
+                  }
+                  if (mathRes.next()) {
+                      math +=  df.format(mathRes.getFloat("max"));
+                  }
+                  if (englishRes.next()) {
+                      english +=  df.format(englishRes.getFloat("max"));
+                  }
+                  JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科最高分", JOptionPane.WARNING_MESSAGE);
+              }catch (SQLException e){
+                  JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
+                  e.printStackTrace();
+              }
           }
           if(ex.getSource() == lowItem){
-
+              //查询最低分
+              //查询成绩
+              String chineseLowSql = "select min(chinese) as min from studentInfo";
+              String mathLowSql = "select min(math) as min from studentInfo";
+              String englishLowSql = "select min(english) as min from studentInfo";
+              ResultSet chineseRes   =   jdbcMySQL.query(chineseLowSql);
+              ResultSet mathRes   =   jdbcMySQL.query(mathLowSql);
+              ResultSet englishRes   =   jdbcMySQL.query(englishLowSql);
+              String chinese = "语文:",math = "数学:",english = "英语:";
+              try {
+                  java.text.DecimalFormat   df = new   java.text.DecimalFormat("#.##");
+                  //保留两位小数
+                  if (chineseRes.next()) {
+                      chinese +=  df.format(chineseRes.getFloat("min"));
+                  }
+                  if (mathRes.next()) {
+                      math +=  df.format(mathRes.getFloat("min"));
+                  }
+                  if (englishRes.next()) {
+                      english +=  df.format(englishRes.getFloat("min"));
+                  }
+                  JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科最低分", JOptionPane.WARNING_MESSAGE);
+              }catch (SQLException e){
+                  JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
+                  e.printStackTrace();
+              }
           }
-          System.out.println("click");
+
       }
   }
     //外观菜单栏下的item的点击事件

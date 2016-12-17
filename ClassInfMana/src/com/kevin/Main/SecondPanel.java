@@ -1,8 +1,11 @@
-package com.kevin.Login;
+package com.kevin.Main;
 
 /**
  * Created by hcnucai on 2016/12/10.
  */
+import com.kevin.MySQL.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,9 +13,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("serial")
 //查询记录面板

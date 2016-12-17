@@ -1,15 +1,15 @@
-package com.kevin.Login;
+package com.kevin.Main;
 
 /**
  * Created by hcnucai on 2016/12/10.
  */
+import com.kevin.MySQL.*;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.swing.*;
 
 @SuppressWarnings("serial")
 //重置密码面板

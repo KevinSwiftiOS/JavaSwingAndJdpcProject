@@ -1,19 +1,19 @@
-package  com.kevin.Login;
-import com.kevin.Login.FirstPanel;
-import com.kevin.Login.SecondPanel;
+package com.kevin.Main;
 
+import com.kevin.File.*;
+import com.kevin.Login.*;
+import com.kevin.MySQL.*;
+import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
-import javax.swing.*;
-import javax.swing.border.Border;
 //主界面
 public class Main extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -37,15 +37,11 @@ public class Main extends JFrame {
     private JMenu preMenu;
     //文件菜单的三个item  分别为从文件导入 导出到文件 退出系统
     private JMenuItem fromFileItem,toFileItem,exitItem;
-    private JPanel processPanel;
-    private  JProgressBar progressBar;
+
     //统计菜单的按钮 学生人数 平均分item 最高分item  最低分item
    private  JMenuItem stuNum,avgItem,highItem,lowItem;
     //外观菜单的item  3个风格的item
   private  JRadioButtonMenuItem  metalItem,metifItem,windowItem;
-//导入导出时候的文件的
-    private File selectedFile;
-    private  String fileName;
     public Main(){
         //设置一些默认值
         // set title
@@ -77,15 +73,6 @@ public class Main extends JFrame {
         this.add(firstPanel, BorderLayout.CENTER);
         this.add(thirdPanel,BorderLayout.CENTER);
         // show the window
-        //progressBar的使用
-        processPanel = new JPanel();
-        progressBar = new JProgressBar(JProgressBar.HORIZONTAL,0,100);
-        progressBar.setPreferredSize(new Dimension(400,30));
-        progressBar.setStringPainted(true);
-        progressBar.setBorder(BorderFactory.createLineBorder(Color.black));
-       processPanel.add(progressBar);
-       processPanel.setVisible(false);
-        this.add(processPanel);
 
 
         this.setVisible(true);
@@ -285,12 +272,12 @@ public void buildPreMenu() {
                 int status = fileChooser.showOpenDialog(null);
                 if(status == JFileChooser.APPROVE_OPTION){
                     //获取用户所选择的文件对象
-                     selectedFile = fileChooser.getSelectedFile();
+                  File   selectedFile = fileChooser.getSelectedFile();
                     //获取用户所选择的文件的路径
-                     fileName = selectedFile.getPath();
+
                     //显示该路径
                  //创建线程 开始启动
-                    Thread fromFileThread = new Thread(new FileOperate());
+                    Thread fromFileThread = new Thread(new FileInOperate(selectedFile));
                     fromFileThread.start();
 
                 }
@@ -303,19 +290,21 @@ public void buildPreMenu() {
                     //获取用户所选择的文件对象
                     File selectedFile = fileChooser.getSelectedFile();
                     //获取用户所选择的文件的路径
-                    String filename = selectedFile.getPath();
+                    String filepath = selectedFile.getPath();
                     //显示该路径
-                    JOptionPane.showMessageDialog(null,"you select " + filename);
+
+                    Thread toFileThread = new Thread(new FileOutOperate(filepath));
+                    toFileThread.start();
                 }
                 if(status == JFileChooser.CANCEL_OPTION){
-                    System.out.println("cancel");
+
                 }
             }
             if(ex.getSource() == exitItem){
                 System.exit(0);
             }
 
-            System.out.println("click");
+
         }
     }
   //统计菜单栏下的item的点击事件
@@ -332,7 +321,7 @@ public void buildPreMenu() {
               try {
                   res.last();
                   String stuNumStr = "学生人数:" + res.getRow();
-                  JOptionPane.showMessageDialog(null, stuNumStr, "学生人数", JOptionPane.WARNING_MESSAGE);
+                  JOptionPane.showMessageDialog(null, stuNumStr, "学生人数", JOptionPane.INFORMATION_MESSAGE);
               }catch (SQLException e){
                   e.printStackTrace();
                   JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
@@ -359,7 +348,7 @@ public void buildPreMenu() {
                  if (englishRes.next()) {
                      english +=  df.format(englishRes.getFloat("avg"));
                  }
-                 JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科平均分", JOptionPane.WARNING_MESSAGE);
+                 JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科平均分", JOptionPane.INFORMATION_MESSAGE);
              }catch (SQLException e){
                  JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
                  e.printStackTrace();
@@ -387,7 +376,7 @@ public void buildPreMenu() {
                   if (englishRes.next()) {
                       english +=  df.format(englishRes.getFloat("max"));
                   }
-                  JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科最高分", JOptionPane.WARNING_MESSAGE);
+                  JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科最高分", JOptionPane.INFORMATION_MESSAGE);
               }catch (SQLException e){
                   JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
                   e.printStackTrace();
@@ -415,7 +404,7 @@ public void buildPreMenu() {
                   if (englishRes.next()) {
                       english +=  df.format(englishRes.getFloat("min"));
                   }
-                  JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科最低分", JOptionPane.WARNING_MESSAGE);
+                  JOptionPane.showMessageDialog(null, chinese + "\n" + math + "\n" + english, "各科最低分", JOptionPane.INFORMATION_MESSAGE);
               }catch (SQLException e){
                   JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
                   e.printStackTrace();
@@ -477,61 +466,8 @@ public void buildPreMenu() {
 
                 }
             }
-
-            System.out.println("clickPre");
         }
     }
-    //创建线程来读入文件
-    private  class FileOperate implements Runnable{
-        @Override
-        public void run() {
-     if(fileName.length() == 0){
-         JOptionPane.showMessageDialog(null,"没有选择文件夹","警告",JOptionPane.WARNING_MESSAGE);
-
-     }else{
-         //看文件是否选择
-         if(selectedFile.length() == 0){
-             progressBar.setMaximum(100);
-             progressBar.setValue(100);
-         }else{
-             progressBar.setMaximum((int)selectedFile.length());
-         }
-         try {
-             processPanel.setVisible(true);
-             boolean isFinished = false;
-             FileInputStream fin = new FileInputStream(selectedFile);
-             System.out.print(selectedFile.length());
-             InputStreamReader reader = new InputStreamReader(fin,"utf-8"); //最后的"GBK"根据文件属性而定，如果不行，改成"UTF-8"试试
-             BufferedReader br = new BufferedReader(reader);
-             int count = 0, ans;
-             byte[] buff = new byte[1024];
-             while ((ans = fin.read(buff)) > 0) {
-                 count += ans;
-                 progressBar.setValue(count);
-                 String str = new String(buff,0,ans,"UTF-8");
-                  System.out.print(str);
-
-                 try {
-                     Thread.sleep(1);
-                 } catch (InterruptedException e) {
-                     e.printStackTrace();
-                 }
-             }
-
-             isFinished = true;
-             if(isFinished){
-               //  processPanel.setVisible(false);
-                 JOptionPane.showMessageDialog(null,"导入成功","成功",JOptionPane.INFORMATION_MESSAGE);
-             }
-         }catch (IOException e){
-             e.printStackTrace();
-         }
-     }
-        }
-    }
-
-
-
     public static void main(String[] args) {
       new Main();
     }

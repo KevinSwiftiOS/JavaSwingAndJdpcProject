@@ -1,4 +1,4 @@
-package com.kevin.Login;
+package com.kevin.MySQL;
 
 import java.sql.*;
 
@@ -62,7 +62,6 @@ public class JDBCMySQL {
             return  0;
         }
     }
-
     //关闭数据库的链接
     public void closeConnection() {
         try {

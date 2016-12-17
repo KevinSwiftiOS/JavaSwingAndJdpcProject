@@ -1,20 +1,14 @@
-package com.kevin.Login;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+package com.kevin.Main;
+import com.kevin.MySQL.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Vector;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 //处理记录面板
 @SuppressWarnings("serial")
@@ -225,7 +219,7 @@ public class FirstPanel extends JPanel{
                    String sql = "delete from studentInfo where stuId = \'" + stuId + "\'";
                    if(jdbcMySQL.deleteOrInsert(sql)> 0){
                        JOptionPane.showMessageDialog(null, "删除成功", "恭喜您", JOptionPane.INFORMATION_MESSAGE);
-                       //前几行和他一杨
+                       //前几行和他一样
                        String newobject[][] = new String[totalRows - 1][6];
                        for(i = 0; i < selectRows;i++)
                            for(j = 0; j < 6;j++)

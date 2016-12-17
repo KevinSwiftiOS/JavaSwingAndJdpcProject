@@ -3,9 +3,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-
+import com.kevin.MySQL.*;
 import javax.swing.*;
-
+import com.kevin.Main.*;
 public class Login extends JFrame {
     //链接数据库的操作
     public static final String names = "com.mysql.jdbc.Driver";
@@ -68,9 +68,9 @@ public class Login extends JFrame {
                 String username = usernameTextField.getText().toString();
                 String password = passwoTextField.getText().toString();
                 if (username.equals("")) {
-                    JOptionPane.showMessageDialog(null, "用户名未填", "警告", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "用户名未填", "警告", JOptionPane.WARNING_MESSAGE);
                 } else if (password.equals("")) {
-                    JOptionPane.showMessageDialog(null, "密码未填", "警告", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "密码未填", "警告", JOptionPane.WARNING_MESSAGE);
                 } else {
                     try {
                         //提醒用户输入用户名和密码
@@ -89,10 +89,10 @@ public class Login extends JFrame {
                             if (res.next()) {
                               new Main();
                             }else{
-                                JOptionPane.showMessageDialog(null, "用户验证失败", "警告", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "用户验证失败", "警告", JOptionPane.WARNING_MESSAGE);
                             }
                         } catch (SQLException e1) {
-                            JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "数据库链接失败", "警告", JOptionPane.WARNING_MESSAGE);
                             e1.printStackTrace();
                         }
                     } catch (ClassNotFoundException e1) {

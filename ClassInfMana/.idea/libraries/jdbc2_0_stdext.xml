@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jdbc2_0-stdext">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../driver/access/jdbc2_0-stdext.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

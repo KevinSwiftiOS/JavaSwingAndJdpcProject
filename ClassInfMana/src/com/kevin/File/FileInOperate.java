@@ -60,17 +60,18 @@ public class FileInOperate extends JFrame implements Runnable {
                         int count = 0;
                         try {
                             while ((buff = bufferedReader.readLine()) != null) {
-                               //readLine自动忽略换行 因此要+1
+                                //readLine自动忽略换行 因此要+1
                                 count += buff.length() + 1;
                                 s = new String(buff);
-                                String  tempStr[] = s.split(" ");
-                               String sql = "insert into studentInfo values (\'" + tempStr[0] + "\',\'" + tempStr[1] + "\',\'" + tempStr[2] + "\'," + tempStr[3] + "," + tempStr[4] + "," + tempStr[5] + ");";
-                                if(jdbcMysql.deleteOrInsert(sql) == 0) {
-                                    break;
+                                String tempStr[] = s.split(" ");
+                                if (tempStr.length == 6) {
+                                    String sql = "insert into studentInfo values (\'" + tempStr[0] + "\',\'" + tempStr[1] + "\',\'" + tempStr[2] + "\'," + tempStr[3] + "," + tempStr[4] + "," + tempStr[5] + ");";
+                                    if (jdbcMysql.deleteOrInsert(sql) == 0) {
+                                        break;
+                                    }
+                                    progressBar.setValue(count);
                                 }
-                                progressBar.setValue(count);
                             }
-
                            if(count == selectedFile.length()) {
                                this.setVisible(false);
                                JOptionPane.showMessageDialog(null, "导入成功", "恭喜您", JOptionPane.INFORMATION_MESSAGE);

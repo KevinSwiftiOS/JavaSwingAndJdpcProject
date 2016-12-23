@@ -27,6 +27,8 @@ public class Main extends JFrame {
     private ThirdPanel thirdPanel;
     //设置三个label 为nav所有 分别为处理记录  查询记录 重置密码
     private JLabel firstLabel, secondLabel,thirdLabel;
+    //桌面图片
+    private JLabel imageLabel;
     //设置上方的菜单栏
     private  JMenuBar menuBar;
     //文件菜单
@@ -43,6 +45,8 @@ public class Main extends JFrame {
     //外观菜单的item  3个风格的item
   private  JRadioButtonMenuItem  metalItem,metifItem,windowItem;
     public Main(){
+        ImageIcon icon = new ImageIcon("background.jpg");
+        imageLabel = new JLabel(icon);
         //设置一些默认值
         // set title
         this.setTitle("班级信息管理");
@@ -69,9 +73,11 @@ public class Main extends JFrame {
 
         // 把要显示的两个面板对象到放到相同区域，在窗体中显示的为最后放入的面板。
         // 这样做的目的是把两个对象都和该窗体关联起来。只有关联起来，之后应用外观风格（例如Motif）才会作用于这两个面板对象。
-        this.add(secondPanel, BorderLayout.CENTER);
+
         this.add(firstPanel, BorderLayout.CENTER);
         this.add(thirdPanel,BorderLayout.CENTER);
+        this.add(secondPanel, BorderLayout.CENTER);
+         this.add(imageLabel,BorderLayout.CENTER);
         // show the window
 
 
@@ -220,7 +226,9 @@ public void buildPreMenu() {
     public class LabelClick extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
+
             if (e.getSource() == firstLabel) {
+                imageLabel.setVisible(false);
                 // the label clicked is set to red, other labels are black
                 firstLabel.setForeground(Color.red);
                 secondLabel.setForeground(Color.black);
@@ -235,6 +243,7 @@ public void buildPreMenu() {
                 secondPanel.setVisible(false);
                 thirdPanel.setVisible(false);
             } else if (e.getSource() == secondLabel) {
+                imageLabel.setVisible(false);
                 // the label clicked is set to red, other labels are black
                 secondLabel.setForeground(Color.red);
                 firstLabel.setForeground(Color.black);
@@ -247,6 +256,7 @@ public void buildPreMenu() {
                 firstPanel.setVisible(false);
                 thirdPanel.setVisible(false);
             }else if(e.getSource() == thirdLabel){
+                imageLabel.setVisible(false);
                 // the label clicked is set to red, other labels are black
                 thirdLabel.setForeground(Color.red);
                 firstLabel.setForeground(Color.black);

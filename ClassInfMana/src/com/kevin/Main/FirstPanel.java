@@ -273,24 +273,30 @@ public class FirstPanel extends JPanel{
             JOptionPane.showMessageDialog(null, "英语成绩未填", "警告", JOptionPane.WARNING_MESSAGE);
             return  false;
         } else {
-            chinese = Float.valueOf(chineseTextField.getText().toString());
-            math = Float.valueOf(mathTextField.getText().toString());
-            english = Float.valueOf(englishTextField.getText().toString());
+            try {
+                chinese = Float.valueOf(chineseTextField.getText().toString());
+                math = Float.valueOf(mathTextField.getText().toString());
+                english = Float.valueOf(englishTextField.getText().toString());
 
-            if (!(gender.equals("male") || gender.equals("female"))) {
-                JOptionPane.showMessageDialog(null, "性别填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
-                return false;
-            } else if (chinese < 0 || chinese > 100) {
-                JOptionPane.showMessageDialog(null, "语文成绩填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
-                return false;
-            } else if (math < 0 || math > 100) {
-                JOptionPane.showMessageDialog(null, "数学成绩填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
-                return false;
-            } else if (english < 0 || english > 100) {
-                JOptionPane.showMessageDialog(null, "英语成绩填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
-                return false;
-            } else {
-                return true;
+                if (!(gender.equals("male") || gender.equals("female"))) {
+                    JOptionPane.showMessageDialog(null, "性别填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                } else if (chinese < 0 || chinese > 100) {
+                    JOptionPane.showMessageDialog(null, "语文成绩填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                } else if (math < 0 || math > 100) {
+                    JOptionPane.showMessageDialog(null, "数学成绩填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                } else if (english < 0 || english > 100) {
+                    JOptionPane.showMessageDialog(null, "英语成绩填写不正确", "警告", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                } else {
+                    return true;
+                }
+            }catch (NumberFormatException e){
+                JOptionPane.showMessageDialog(null, "成绩填写格式不正确", "警告", JOptionPane.WARNING_MESSAGE);
+                e.printStackTrace();
+                return  false;
             }
         }
     }

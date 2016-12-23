@@ -49,10 +49,11 @@ public class SecondPanel extends JPanel{
         objects = new String[4][6];
         DefaultTableModel model = new DefaultTableModel(objects,titles);
         JTable table = new JTable(model);
-        table.setPreferredScrollableViewportSize(new Dimension(660, 170));
+        table.setPreferredScrollableViewportSize(new Dimension(660, 120));
         table.setRowHeight(30);
         scrollPane = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        southPanel.add(scrollPane);
+        southPanel.setLayout(new BorderLayout());
+        southPanel.add(scrollPane,BorderLayout.CENTER);
         // 把标题面板加入first panel面板
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(centerPanel,BorderLayout.CENTER);
